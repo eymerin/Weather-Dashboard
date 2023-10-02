@@ -14,39 +14,42 @@
 // click on a city in the search history, presented with current and future 
 // conditions for that city
 
-var history = [];
+let searchHistory = [];
 var weatherAPI = 'https://api.openweathermap.org';
 var APIKey = 'c4369a41ab8c72d7e6a4b5e1dea8e37a';
-
-var searchForm = document.querySelector('#search-form');
-var userSearch = document.querySelector('search');
-var todayContainer = document.querySelector('#today');
-var forecastContainer = document.querySelector('#forecast');
+var userSearch = document.getElementById('#search');
 var searchHistoryContainer = document.querySelector('#history');
-const searchBtn = document.getElementById("searchBtn");
-
-
 
 //dayjs to create var for current date
 var today = dayjs().format('MM/DD/YYYY');
 console.log(today);
 
+//populate search history buttons
+
+if (localStorage.getItem('localHistory')) {
+    searchHistory = JSON.parse(localStorage.getItem('localHistory'));
+};
+
+console.log(searchHistory);
+
+for (let i = 0; i < searchHistory.length; i++) {
+    $('#history').append(`<button class="histSearch btn btn-default w-100 mb-2" style="background-color:lightgray">${userSearch}</button>`);
+    console.log(searchHistory[searchHistory[i]]);
+};
+
 //Set user input var using event listener on search button
 
-searchBtn.addEventListener("click", function() {
-    userSearch.value = ""
-    if (!userSearch.value) {
-        return;
-    }
-    var search = userSearch.value.trim();
-    fetchCoords(search)
-});
-
-//call api using user input
-//https://api.openweathermap.org/data/2.5/forecast?q={city name}&appid={API key}
-
-// Fetches weather data for given location from the Weather Geolocation
-// endpoint; then, calls functions to display current and forecast weather data.
+$('#searchBtn').on('click', function() {
+    // Retrieve the value of the input element
+    const userSearch = $('#search').val();
+    
+    // Do something with the value
+    console.log(userSearch);
+    fetchCoords(userSearch);
+    searchHistory.push(userSearch);
+    localStorage.setItem('localHistory', JSON.stringify(searchHistory));
+    console.log(localStorage.getItem('localHistory'));
+  });
 
 function fetchCoords(userSearch) {
     var apiUrl = `${weatherAPI}/geo/1.0/direct?q=${userSearch}&limit=5&appid=${APIKey}`;
@@ -85,49 +88,15 @@ function fetchWeather(location) {
       .catch(function (err) {
         console.error(err);
       });
+    renderWeather();
 }
 
-fetchCoords();
-fetchWeather();
-//renderCurrentWeather();
+function renderWeather(forecast) {
+    var temp = forecast.temp.day;
+    var windSpeed = forecast.wind_speed.day;
+    var humidity = forecast.humidity.day;
+    var city = forecast;
+    var iconUrl = `https://openweathermap.org/img/w/${weather.weather[0].icon}.png`;
+    var iconDescription = weather.weather[0].description || weather[0].main;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-////if (localStorage.getItem('searchHistory')) {
-    history = JSON.parse(localStorage.getItem('history'));
-//};
-
-//console.log(searchHistory);
-
-//for (let i = 0; i < searchHistory.length; i++) {
-//    $('#history').append('<button type="button" class="btn btn-primary"></button>');
-//    console.log(searchHistory[searchHistory[i]]);
-//};
