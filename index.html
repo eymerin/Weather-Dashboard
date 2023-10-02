@@ -1,0 +1,74 @@
+<!--add dayjs-->
+<!--use bootstrap to build elements-->
+<!--5 day weather-->
+<!--add api keys-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="develop/css/style.css" />
+    <title>Weather Dashboard</title>
+  </head>
+
+  <body>
+    <header class="header text-center p-4" id="header">
+      <h1 id="title" class="display-4">Weather Dashboard</h1>
+    </header>
+    <div id="container" class="container-fluid row">
+        <aside class="input-group col-lg-4 p-0" style="width:25%">
+            <div id="form" class="container">
+                <input id="search" type="search" class="form-control rounded" placeholder="Search for a city" aria-label="Search" aria-describedby="search-addon" style="display:flex"/>
+                <button id="searchBtn" type="submit" class="btn btn-primary w-100 mb-4">Search</button>
+                <div id="history" class="container p-0">
+                    <button class="histSearch btn btn-default w-100 mb-2" style="background-color:lightgray">Salt Lake City</button>
+                    <button class="histSearch btn btn-default w-100 mb-2" style="background-color:lightgray">Phoenix</button>
+                </div>
+            </div>
+            
+        </aside>    
+        <div id= "forecast" class="col-lg-8" style="width:75%">
+            <div id="today" class="card-body border border-dark">
+                <h2>Displays city and date</h2>
+                <h4 id="sun">icon</h4>
+                <h4 id="temp">temperature</h4>
+                <h4 id="wind">wind</h4>
+                <h4 id="humidity">humidity</h4>
+            </div>
+            <h3>5-Day Forcast</h3>
+            <div class="row margin-top-4 p-3">
+                <div class="col mx-1 bg-info">
+                    <h4>Date</h4>
+                    <h5 id="sun">icon</h5>
+                    <h5 id="temp">temperature</h5>
+                    <h5 id="wind">wind</h5>
+                    <h5 id="humidity">humidity</h5>                    
+                </div>
+                <div class="col mx-1 bg-info">2</div>
+                <div class="col mx-1 bg-info">3</div>
+                <div class="col mx-1 bg-info">4</div>
+                <div class="col mx-1 bg-info">5</div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/dayjs.min.js"></script>
+    <script src="./develop/js/script.js"></script>
+  </body>
+</html>
