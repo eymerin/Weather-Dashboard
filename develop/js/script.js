@@ -119,6 +119,5 @@ function renderForecastCards(data) {
         <h5 id="humidity">Humidity ${data.daily[index].humidity}</h5>
       </div> `
   }
-
 }
 
