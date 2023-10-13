@@ -5,39 +5,36 @@ const searchBar = document.getElementById('#search');
 var searchHistoryContainer = document.querySelector('#history');
 const displayToday = document.getElementById("today")
 
-
+//localStorage.clear();
 //dayjs to create var for current date
 var today = dayjs().format('MM/DD/YYYY');
 console.log(today);
 
 //populate search history buttons
-
 if (localStorage.getItem('localHistory')) {
     searchHistory = JSON.parse(localStorage.getItem('localHistory'));
-    console.log(searchHistory[0]);
+    console.log(searchHistory);
 };
 
 for (let i = 0; i < searchHistory.length; i++) {
-    $('#history').append(`<button class="histSearch btn btn-default w-100 mb-2" style="background-color:lightgray">${searchHistory[searchHistory[i]]}</button>`);
-    console.log(searchHistory[searchHistory[i]]);
+    $('#history').append(`<button class="histSearch btn btn-default w-100 mb-2" style="background-color:lightgray">${searchHistory[i]}</button>`);
+    console.log(searchHistory[i]);
 };
 
 //Set user input var using event listener on search button
 
 $('#searchBtn').on('click', function() {
-  //localStorage.clear();
+  
   // Retrieve the value of the input element
   const userSearch = $('#search').val();
   console.log(userSearch);
   fetchCoords(userSearch);
-  searchHistory.push(userSearch);
+  console.log(userSearch);
+});
 
-  if (!searchHistory.includes(userSearch)) {
-    const userSearchString = JSON.stringify(userSearch);
-    localStorage.setItem('userSearch', userSearchString);
-    
-  }
-  console.log(localStorage.getItem('localHistory'));
+$('.histSearch').on('click', function() {
+  // Retrieve the value of the input element
+  fetchCoords(this.innerText);
 });
 
 function fetchCoords(userSearch) {
@@ -59,6 +56,7 @@ function fetchCoords(userSearch) {
       .catch(function (err) {
         console.error(err);
       });
+    
 }
   
 function fetchWeather(location) {
@@ -79,6 +77,13 @@ function fetchWeather(location) {
         renderCurrentWeather(city, data);
         renderForecastCards(data);
       })
+    if (!searchHistory.includes(city)) {
+      searchHistory.push(city);
+      console.log(searchHistory);
+      localStorage.setItem('localHistory', JSON.stringify(searchHistory));
+      console.log(localStorage.getItem('localHistory'));
+      $('#history').append(`<button class="histSearch btn btn-default w-100 mb-2" style="background-color:lightgray">${city}</button>`);
+    }
 }
 
 function renderCurrentWeather(city, data) {
