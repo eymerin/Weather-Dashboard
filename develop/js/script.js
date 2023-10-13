@@ -1,24 +1,10 @@
-// weather dashboard with form inputs
-
-// search for a city, presented with current and future conditions for that city
-// and that city is added to the search history
-
-// view current weather conditions for that city, presented with the city name, 
-// the date, an icon representation of weather conditions, the temperature, the
-// humidity, and the the wind speed
-
-// view future weather conditions for that city, presented with a 5-day forecast
-// that displays the date, an icon representation of weather conditions, the
-// temperature, the wind speed, and the humidity
-
-// click on a city in the search history, presented with current and future 
-// conditions for that city
-
 let searchHistory = [];
 var weatherAPI = 'https://api.openweathermap.org';
 var APIKey = 'c4369a41ab8c72d7e6a4b5e1dea8e37a';
-var userSearch = document.getElementById('#search');
+const searchBar = document.getElementById('#search');
 var searchHistoryContainer = document.querySelector('#history');
+const displayToday = document.getElementById("today")
+
 
 //dayjs to create var for current date
 var today = dayjs().format('MM/DD/YYYY');
@@ -28,28 +14,31 @@ console.log(today);
 
 if (localStorage.getItem('localHistory')) {
     searchHistory = JSON.parse(localStorage.getItem('localHistory'));
+    console.log(searchHistory[0]);
 };
 
-console.log(searchHistory);
-
 for (let i = 0; i < searchHistory.length; i++) {
-    $('#history').append(`<button class="histSearch btn btn-default w-100 mb-2" style="background-color:lightgray">${userSearch}</button>`);
+    $('#history').append(`<button class="histSearch btn btn-default w-100 mb-2" style="background-color:lightgray">${searchHistory[searchHistory[i]]}</button>`);
     console.log(searchHistory[searchHistory[i]]);
 };
 
 //Set user input var using event listener on search button
 
 $('#searchBtn').on('click', function() {
-    // Retrieve the value of the input element
-    const userSearch = $('#search').val();
+  //localStorage.clear();
+  // Retrieve the value of the input element
+  const userSearch = $('#search').val();
+  console.log(userSearch);
+  fetchCoords(userSearch);
+  searchHistory.push(userSearch);
+
+  if (!searchHistory.includes(userSearch)) {
+    const userSearchString = JSON.stringify(userSearch);
+    localStorage.setItem('userSearch', userSearchString);
     
-    // Do something with the value
-    console.log(userSearch);
-    fetchCoords(userSearch);
-    searchHistory.push(userSearch);
-    localStorage.setItem('localHistory', JSON.stringify(searchHistory));
-    console.log(localStorage.getItem('localHistory'));
-  });
+  }
+  console.log(localStorage.getItem('localHistory'));
+});
 
 function fetchCoords(userSearch) {
     var apiUrl = `${weatherAPI}/geo/1.0/direct?q=${userSearch}&limit=5&appid=${APIKey}`;
@@ -62,7 +51,7 @@ function fetchCoords(userSearch) {
         if (!data[0]) {
           alert('Location not found');
         } else {
-          //appendToHistory(search);
+          //appendToHistory(userSearch);
           fetchWeather(data[0]);
           console.log(data[0])
         }
@@ -75,28 +64,56 @@ function fetchCoords(userSearch) {
 function fetchWeather(location) {
     var { lat } = location;
     var { lon } = location;
+    const weatherLoc = location;
     var city = location.name;
     var apiUrl = `${weatherAPI}/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&exclude=minutely,hourly&appid=${APIKey}`;
-  
+    console.log(forecast);
     fetch(apiUrl)
       .then(function (res) {
         return res.json();
       })
       .then(function (data) {
         console.log(city, data);
+        console.log(data.current.clouds)
+        //forecast = data
+        renderCurrentWeather(city, data);
+        renderForecastCards(data);
       })
-      .catch(function (err) {
-        console.error(err);
-      });
-    renderWeather();
 }
 
-function renderWeather(forecast) {
-    var temp = forecast.temp.day;
-    var windSpeed = forecast.wind_speed.day;
-    var humidity = forecast.humidity.day;
-    var city = forecast;
-    var iconUrl = `https://openweathermap.org/img/w/${weather.weather[0].icon}.png`;
-    var iconDescription = weather.weather[0].description || weather[0].main;
+function renderCurrentWeather(city, data) {
+  console.log(data);
+  var iconDescription = data.current.weather.description;
+  const unixTimestamp = data.current.dt;
+  const date = dayjs.unix(unixTimestamp);
+  displayToday.textContent=""
+  displayToday.innerHTML +=
+    `<h2 id="date">${city} ${today}</h2>
+    <img id="conditions" attribute="${iconDescription}" src="https://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png"></img>
+    <h5 id="temp">High ${data.current.temp} F</h5>
+    <h5 id="wind">Wind ${data.current.wind_speed} mph</h5>
+    <h5 id="humidity">Humidity ${data.current.humidity}</h5>`
+}
+
+//render cards
+function renderForecastCards(data) {
+  forecastContainer.textContent = ""
+
+  for (let index = 0; index < 5; index++) {
+    var iconDescription = data.daily[index].weather.description;
+    const unixTimestamp = data.daily[index].dt; // example Unix timestamp
+    const date = dayjs.unix(unixTimestamp);
+    const formattedDate = date.format('MMMM DD YYYY');
+    forecastContainer.innerHTML += 
+      `<div class="col mx-1 bg-info p-2">
+        <h4>${formattedDate}</h4>
+        <img id="conditions" attribute="${iconDescription}" src="https://openweathermap.org/img/wn/${data.daily[index].weather[0].icon}@2x.png"></img>
+        <h5 id="temphigh">High ${data.daily[index].temp.max} F</h5>
+        <h5 id="templow">Low ${data.daily[index].temp.min} F</h5>
+        <h5 id="wind">Wind ${data.daily[index].wind_speed} mph</h5>
+        <h5 id="humidity">Humidity ${data.daily[index].humidity}</h5>
+      </div> `
+  }
+
 }
 
